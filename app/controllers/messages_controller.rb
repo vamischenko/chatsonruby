@@ -3,16 +3,26 @@ class MessagesController < ApplicationController
 
   def index
     @rooms = current_user.rooms
-    @messages = @room.messages.includes(:user)
+    @pagy, @messages = pagy(@room.messages.includes(:user).order(created_at: :asc), items: 50)
     @message = Message.new
   end
 
   def create
     @message = @room.messages.new(message_params)
     if @message.save
+      ActionCable.server.broadcast(
+        "room_#{@room.id}",
+        {
+          message_id: @message.id,
+          user_name: @message.user.name,
+          content: @message.content,
+          created_at: l(@message.created_at)
+        }
+      )
       redirect_to room_messages_path(@room)
     else
-      @messages = @room.messages.includes(:user)
+      @rooms = current_user.rooms
+      @pagy, @messages = pagy(@room.messages.includes(:user).order(created_at: :asc), items: 50)
       render :index
     end
   end

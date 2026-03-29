@@ -38,3 +38,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise', '~> 4.9'
 gem 'pry-rails'
 gem 'image_processing', '~> 1.13'
+gem 'pagy', '~> 9.3'
+gem 'dotenv-rails', '~> 3.1', groups: [:development, :test]

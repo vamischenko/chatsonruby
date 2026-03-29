@@ -17,10 +17,10 @@ class Message < ApplicationRecord
 
   def image_type_and_size
     unless ALLOWED_IMAGE_TYPES.include?(image.content_type)
-      errors.add(:image, :invalid_type, default: "は jpeg/png/gif/webp のみ許可されています")
+      errors.add(:image, :invalid_type, default: "разрешены только jpeg, png, gif и webp")
     end
     if image.byte_size > MAX_IMAGE_SIZE
-      errors.add(:image, :too_large, default: "は5MB以下にしてください")
+      errors.add(:image, :too_large, default: "размер не должен превышать 5 МБ")
     end
   end
 end

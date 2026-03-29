@@ -1,12 +1,21 @@
 <div class='account-page' id='account-page'>
   <div class='account-page__inner clearfix'>
     <div class='account-page__inner--left account-page__header'>
-      <h2>Edit Account</h2>
-      <h5>アカウントの編集</h5>
-      <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: 'btn'%>
-      <%= link_to "チャットページに戻る", :back, class: 'btn'%>
+      <h2>Редактирование аккаунта</h2>
+      <h5>Измените данные профиля</h5>
+      <%= link_to "Выйти", destroy_user_session_path, method: :delete, class: 'btn'%>
+      <%= link_to "Назад к чату", :back, class: 'btn'%>
     </div>
     <div class='account-page__inner--right user-form'>
+      <% if current_user.errors.any? %>
+        <div id="error_explanation">
+          <ul>
+            <% current_user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <%= form_with model: current_user, local: true do |f|%>
         <div class='field'>
           <div class='field-label'>
@@ -24,8 +33,32 @@
             <%= f.email_field :email%>
           </div>
         </div>
+        <div class='field'>
+          <div class='field-label'>
+            <%= f.label :password, "Новый пароль (только если меняете)"%>
+          </div>
+          <div class='field-input'>
+            <%= f.password_field :password, autocomplete: "new-password"%>
+          </div>
+        </div>
+        <div class='field'>
+          <div class='field-label'>
+            <%= f.label :password_confirmation, "Подтверждение пароля"%>
+          </div>
+          <div class='field-input'>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password"%>
+          </div>
+        </div>
+        <div class='field'>
+          <div class='field-label'>
+            <%= f.label :current_password, "Текущий пароль (обязательно)"%>
+          </div>
+          <div class='field-input'>
+            <%= f.password_field :current_password, autocomplete: "current-password"%>
+          </div>
+        </div>
         <div class='actions'>
-          <%= f.submit "Update", class: 'btn'%>
+          <%= f.submit "Сохранить", class: 'btn'%>
         </div>
       <% end %>
     </div>

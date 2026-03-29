@@ -1,23 +1,31 @@
 <div class='chat-room-form'>
-  <h1>新規チャットルーム</h1>
+  <h1>Новая комната чата</h1>
+  <% if @room.errors.any? %>
+    <div id="error_explanation">
+      <ul>
+        <% @room.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%=form_with model: @room, local: true do |f|%>
     <div class='chat-room-form__field'>
       <div class='chat-room-form__field--left'>
-        <%= f.label :name, :チャットルーム名, class: 'chat-room-form__label'%>
+        <%= f.label :name, "Название комнаты", class: 'chat-room-form__label'%>
       </div>
       <div class='chat-room-form__field--right'>
-        <%= f.text_field :name, class: 'chat__room_name chat-room-form__input', placeholder: 'チャットルーム名を入力してください'%>
+        <%= f.text_field :name, class: 'chat__room_name chat-room-form__input', placeholder: 'Введите название комнаты'%>
       </div>
     </div>
     <div class='chat-room-form__field'>
     </div>
     <div class='chat-room-form__field'>
       <div class='chat-room-form__field--left'>
-        <label class='chat-room-form__label' for='chat_room_チャットメンバー'>チャットメンバー</label>
+        <label class='chat-room-form__label' for='room_user_ids_select'>Участники чата</label>
       </div>
       <div class='chat-room-form__field--right'>
-        <select name="room[user_ids][]">
-          <option value="">チャットするユーザーを選択してください</option>
+        <select name="room[user_ids][]" id="room_user_ids_select" multiple="multiple" size="5">
           <% User.where.not(id: current_user.id).find_each do |user| %>
             <option value="<%= user.id %>"><%= user.name %></option>
           <% end %>

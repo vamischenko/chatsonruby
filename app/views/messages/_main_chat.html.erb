@@ -6,22 +6,32 @@
   </div>
   <div class="right-header">
     <div class="header-button">
-      <%= link_to "チャットを終了する", room_path(@room), method: :delete %>
+      <%= link_to "Завершить чат", room_path(@room), method: :delete %>
     </div>
   </div>
 </div>
 
-<div class="messages">
+<div class="messages" data-room-id="<%= @room.id %>">
+  <% if @pagy.prev %>
+    <div class="pagy-nav">
+      <%= link_to "← Предыдущие сообщения", room_messages_path(@room, page: @pagy.prev) %>
+    </div>
+  <% end %>
   <%= render partial: "message", collection: @messages %>
+  <% if @pagy.next %>
+    <div class="pagy-nav">
+      <%= link_to "Следующие сообщения →", room_messages_path(@room, page: @pagy.next) %>
+    </div>
+  <% end %>
 </div>
 
 <%= form_with model: [@room, @message], class: "form", local: true do |f| %>
   <div class="form-input">
-    <%= f.text_field :content, class: "form-message", placeholder: "type a message" %>
+    <%= f.text_field :content, class: "form-message", placeholder: "Введите сообщение" %>
     <label class="form-image">
-      <span class="image-file">画像</span>
+      <span class="image-file">Изображение</span>
       <%= f.file_field :image, class: "hidden" %>
     </label>
   </div>
-  <%= f.submit "送信", class: "form-submit" %>
+  <%= f.submit "Отправить", class: "form-submit" %>
 <% end %>
