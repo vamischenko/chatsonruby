@@ -7,7 +7,7 @@
   </div>
 </div>
 <div class="rooms">
-  <% current_user.rooms.each do |room| %>
+  <% @rooms.each do |room| %>
     <div class="room">
       <div class="room-name">
         <%= link_to room.name, room_messages_path(room) %>

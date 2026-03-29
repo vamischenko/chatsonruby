@@ -1,50 +1,93 @@
-## users
+# Chat on Ruby (chatsonruby)
 
-| Column             | Type   | Options     |
-| ------------------ | ------ | ----------- |
-| name               | string | null: false |
-| email              | string | null: false |
-| encrypted_password | string | null: false |
+Учебный чат на **Ruby on Rails**: комнаты, участники, сообщения с текстом и вложениями через **Active Storage** (изображения). Интерфейс и локаль по умолчанию — японский (как в исходном шаблоне приложения).
 
-### Association
+## Возможности
 
-- has_many :room_users
-- has_many :rooms, through: :room_users
-- has_many :messages
+- Регистрация и вход через **Devise**
+- Создание комнат с выбором участников (создатель всегда добавляется в комнату)
+- Просмотр ленты сообщений и отправка текста или картинки (jpeg/png/gif/webp, до 5 МБ)
+- Доступ к комнатам и удаление комнаты только у участников
+- Валидация типа и размера загружаемых изображений
 
-## rooms
+## Стек
 
-| Column | Type   | Options     |
-| ------ | ------ | ----------- |
-| name   | string | null: false |
+| Компонент   | Версия (ориентир)   |
+| ----------- | ------------------- |
+| Ruby        | 3.2.x               |
+| Rails       | 6.1.x               |
+| База данных | MySQL 5.7+ / 8.x    |
+| JS-сборка   | Webpacker 5 + Yarn  |
 
-### Association
+## Требования
 
-- has_many :room_users
-- has_many :users, through: :room_users
-- has_many :messages
+- Ruby **3.2.x** и заголовки для сборки нативных расширений (например, пакет `ruby3.2-dev` в Debian/Ubuntu)
+- **MySQL** 5.7+ или 8.x
+- **Node.js** и **Yarn** для Webpacker
+- Для гемов `mysql2`, `sassc` и др.: `build-essential`, `libmysqlclient-dev` (или аналог в вашей ОС)
+- **ImageMagick** или **libvips** — для обработки изображений через `image_processing`
 
-## room_users
+## Установка
 
-| Column | Type       | Options                        |
-| ------ | ---------- | ------------------------------ |
-| user   | references | null: false, foreign_key: true |
-| room   | references | null: false, foreign_key: true |
+```bash
+# Клонирование и зависимости
+bundle install
+yarn install
 
-### Association
+# База: создайте БД и примените миграции
+rails db:create db:migrate
 
-- belongs_to :room
-- belongs_to :user
+# (опционально) тестовые данные
+rails db:seed
+```
 
-## messages
+Настройте `config/database.yml` (пользователь, пароль, при необходимости `host` / `socket` под вашу ОС). На Linux чаще используют `host: 127.0.0.1` вместо сокета в `/tmp/mysql.sock`.
 
-| Column  | Type       | Options                        |
-| ------- | ---------- | ------------------------------ |
-| content | string     |                                |
-| user    | references | null: false, foreign_key: true |
-| room    | references | null: false, foreign_key: true |
+### Запуск в разработке
 
-### Association
+В двух терминалах:
 
-- belongs_to :room
-- belongs_to :user
+```bash
+bin/webpack-dev-server
+```
+
+```bash
+rails s
+```
+
+Откройте приложение в браузере (по умолчанию `http://localhost:3000`).
+
+### Сборка ассетов для production
+
+```bash
+RAILS_ENV=production rails assets:precompile
+```
+
+## Модель данных (кратко)
+
+- **User** — имя, email, пароль (Devise); комнаты через `room_users`
+- **Room** — имя; участники many-to-many с пользователями
+- **RoomUser** — связь пользователь ↔ комната
+- **Message** — текст и опциональное вложение `image` (Active Storage), принадлежит пользователю и комнате
+
+## Тесты
+
+```bash
+bundle exec rspec
+```
+
+(При необходимости настройте `database.yml` для окружения `test`.)
+
+## Полезные команды
+
+| Команда                           | Назначение                       |
+| --------------------------------- | -------------------------------- |
+| `rails console`                   | Консоль Rails                    |
+| `rails db:rollback`               | Откат миграции                   |
+| `bundle update`                   | Обновление Ruby-зависимостей     |
+| `yarn upgrade`                    | Обновление npm-пакетов           |
+| `RAILS_ENV=test rails db:migrate` | Применить миграции к тестовой БД |
+
+## Лицензия
+
+[MIT](LICENSE)
